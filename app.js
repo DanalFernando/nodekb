@@ -2,7 +2,7 @@ var express = require('express');
 
 const path =require('path')
 const mongoose = require('mongoose')
-
+const bodyParser = require('body-parser')
 const app = express();
 // Bring in models
 let Article = require('./models/article')
@@ -21,6 +21,12 @@ db.on('error', function(err){
 });
 app.set('views', path.join(__dirname , 'views'));
 app.set('view engine', 'pug')
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+
 
 app.get('/', function (req, res) {
      Article.find({}, function(err, articles){
@@ -67,6 +73,23 @@ app.get('/articles/add', function(req , res){
       
     } )
     
+})
+// add submit
+app.post("/articles/add", function(req,res){
+    let article = new Article();
+    article.title = req.body.title;
+    article.author = req.body.author;
+    article.body = req.body.body;
+    article.save(function(err){
+        if(err){
+            console.log(err)
+            return;
+
+        }else{
+            res.redirect('/')
+        }
+    })
+  
 })
 // use port 3000 unless there exists a preconfigured port
 var port = process.env.port || 3000;
