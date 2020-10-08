@@ -5,7 +5,8 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const app = express();
 // Bring in models
-let Article = require('./models/article')
+let Article = require('./models/article');
+const article = require('./models/article');
 mongoose.connect('mongodb://localhost/nodekb', {useNewUrlParser: true, useUnifiedTopology: true});
 let db = mongoose.connection;
 
@@ -47,24 +48,7 @@ app.get('/', function (req, res) {
       
 
      });
-    //     id:1,
-    //     title:'Article One',
-    //     author:'Danal Fernando',
-    //     body:'This is article one'
-    // },
-    // {
-    //     id:2,
-    //     title:'Article Two',
-    //     author:'Geevinda Samaraweera',
-    //     body:'This is article one'
-    // },{
-    //     id:3,
-    //     title:'Article One',
-    //     author:'Sandev Abeykoon',
-    //     body:'This is article one'
-    // },
-    //     ];
-   
+
     
 });
 
@@ -75,7 +59,19 @@ app.get('/articles/add', function(req , res){
         title: 'Add Article',
       
     } )
+
     
+})
+
+// get article
+app.get('/article/:id', function(req,res){
+    Article.findById(req.params.id,function(err,article){
+        res.render('article',{
+            article: article,
+          
+        } )
+    
+    })
 })
 // add submit
 app.post("/articles/add", function(req,res){
@@ -94,7 +90,19 @@ app.post("/articles/add", function(req,res){
     })
   
 })
+
+// load edit form
+app.get('/article/edit/:id', function(req,res){
+    Article.findById(req.params.id,function(err,article){
+        res.render('edit_article',{
+            title : 'Edit Article',
+            article: article,
+          
+        } )
+    
+    })
+})
 // use port 3000 unless there exists a preconfigured port
-var port = process.env.port || 3000;
+var port = process.env.port || 5000;
 
 app.listen(port);
